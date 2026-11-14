@@ -44,10 +44,10 @@
 
 只在你主动开启相应功能时写入，且只写两处：
 
-| 位置 | 内容 | 触发条件 |
-|------|------|----------|
-| `HKCU\Software\Microsoft\Windows\CurrentVersion\Run` 的 `GammaLift` 值 | `GammaLift.exe` 的完整路径 | 你开启「开机自启动」；关闭时删除该值 |
-| `HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ICM` 的 `GdiIcmGammaRange` | `256` | 你在「设置 › 启动与权限」中主动解除 Gamma 范围限制；需管理员权限，会弹 UAC |
+| 位置                                                                              | 内容                         | 触发条件                                                                    |
+| --------------------------------------------------------------------------------- | ---------------------------- | --------------------------------------------------------------------------- |
+| `HKCU\Software\Microsoft\Windows\CurrentVersion\Run` 的 `GammaLift` 值        | `GammaLift.exe` 的完整路径 | 你开启「开机自启动」；关闭时删除该值                                        |
+| `HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\ICM` 的 `GdiIcmGammaRange` | `256`                      | 你在「设置 › 启动与权限」中主动解除 Gamma 范围限制；需管理员权限，会弹 UAC |
 
 两处都可随时撤销：关掉开关，或手动删除对应值。
 

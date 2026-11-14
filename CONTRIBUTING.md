@@ -1,6 +1,6 @@
 # 贡献指南
 
-GammaLift 是 C# + WinForms 的便携单文件应用，欢迎提交 issue 与 pull request。动手前建议先读 [AGENTS.md](AGENTS.md)（源码地图、核心实现要点与完整代码约定）和 [docs/guide.md](docs/guide.md)（功能行为说明）。
+GammaLift 是 C# + WinForms 的便携单文件应用，欢迎提交 issue 与 pull request。
 
 ## 环境要求
 
@@ -37,13 +37,13 @@ powershell -ExecutionPolicy Bypass -File tools\Test.ps1
 
 构建使用 .NET Framework 4.0 时代的 `csc.exe`，**语法上限是 C# 5**：
 
-| 不能用 | 改用 |
-|---|---|
-| 字符串插值 `$"{x}"` | `string.Format` 或 `+` 拼接 |
-| null 条件运算符 `?.`、`??=` | 显式 `if (x != null)` |
-| `nameof()`、表达式体成员 `=>`、`using static` | 常规写法 |
-| 元组、模式匹配、局部函数、`out var` | 传统等价写法 |
-| 自动属性初始化器 | 在构造函数里赋值 |
+| 不能用                                              | 改用                            |
+| --------------------------------------------------- | ------------------------------- |
+| 字符串插值 `$"{x}"`                               | `string.Format` 或 `+` 拼接 |
+| null 条件运算符 `?.`、`??=`                     | 显式 `if (x != null)`         |
+| `nameof()`、表达式体成员 `=>`、`using static` | 常规写法                        |
+| 元组、模式匹配、局部函数、`out var`               | 传统等价写法                    |
+| 自动属性初始化器                                    | 在构造函数里赋值                |
 
 可以放心使用：`var`、LINQ、lambda、泛型、`async/await`、`string.Format`。
 
@@ -53,7 +53,6 @@ JSON 序列化使用 `System.Web.Extensions.dll` 的 `JavaScriptSerializer`：`b
 
 完整细节见 [AGENTS.md](AGENTS.md) 的「代码约定」与「核心实现要点」，这里只列最容易踩的几条：
 
-- 注释用简体中文，`/// <summary>` 写要点
 - 源文件 **UTF-8 无 BOM**
 - UI 全部手写坐标布局，不用 Designer 与 `.resx`；所有坐标在 `LayoutUi()` 里按当前尺寸计算，不写在构建代码里
 - 尺寸统一走 `S(int)`：96 dpi 设计值 × 界面缩放 × 系统 DPI；`AutoScaleMode` 为 `None`，与 `S()` 自带缩放叠加会双重放大
@@ -71,15 +70,6 @@ JSON 序列化使用 `System.Web.Extensions.dll` 的 `JavaScriptSerializer`：`b
 ## 提交信息
 
 提交信息沿用仓库现有的 Conventional Commits 风格：`feat:` / `fix:` / `docs:` / `chore:` / `refactor:`，冒号后用一句话说明改动。不兼容改动写成 `feat!:`，或在正文加 `BREAKING CHANGE:` 说明影响。
-
-仓库现有提交中的几条真实示例：
-
-```text
-feat: 重构主界面与设置对话框，硬件调节支持数值输入
-feat: store settings next to the exe as GammaLiftSettings.json, fall back to Documents
-docs: rewrite bilingual README for GammaLift, sync AGENTS.md, add screenshots
-chore: 补充 AGENTS.md 项目导览，精简 .gitignore
-```
 
 ## 提交前自检
 

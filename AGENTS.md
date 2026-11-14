@@ -11,7 +11,7 @@
 - 便携单文件应用（`GammaLift.exe`），无安装程序
 - 目标运行时：**Windows 自带的 .NET Framework 4.x**，不依赖任何外部 SDK / 运行时下载
 - 技术栈：C# + WinForms + P/Invoke（GDI32 / User32 / Dxva2）
-- 界面语言：内置 16 种（简体中文是源语言，代码里直接写中文原文），默认跟随系统
+- 界面语言：内置 16 种，默认跟随系统
 - 许可证：MIT
 
 ## 构建
@@ -37,6 +37,12 @@ powershell -ExecutionPolicy Bypass -File build.ps1
 图标是深色圆角底板 + 暖色光晕 + 8 道光线，光晕与光线表达「提亮暗部」。
 资源名 `GammaLift.ico` 在 `build.ps1` 与 `src/AppIcon.cs` 各写一处，两处需保持一致；不一致时 `AppIcon` 静默回退成系统默认图标，编译不报错。
 
+### 文档截图
+
+`docs/screenshots/main-zh.png` / `main-en.png` 由 `tools/MakeScreenshots.ps1` 生成：脚本排除 `MonitorService.cs` / `SystemIntegration.cs`，改用 `tools/MakeScreenshots.cs` 里的虚拟显示器（「演示显示器 A / B」「Demo Display A / B」），不会把本机显示器名带进文档。改 UI 后重跑该脚本即可更新两张图。
+
+`docs/screenshots/presets-compare-zh.jpg` / `-en.jpg`（室内）与 `presets-night-zh.jpg` / `-en.jpg`（极暗）由 `build/gamma-test/readme_preview.py` 生成：分别读取 `build/gamma-test/src/01-indoor-mixed-light.png` 与 `10-night-black-room.png`，先裁掉顶部物品栏、左侧人形与底部体力 / 版本信息，再套三套推荐预设拼成 2×2 对比图。换素材或改预设参数时同步重跑。
+
 ### 语言与语法上限
 
 构建链路是 .NET Framework 4.0 的 `csc.exe`，**语法上限为 C# 5**：
@@ -51,29 +57,31 @@ powershell -ExecutionPolicy Bypass -File build.ps1
 
 ## 源码地图
 
-| 文件 | 行数 | 职责 |
-|------|-----:|------|
-| `src/Program.cs` | 126 | 入口。单实例 Mutex（`GammaLift_SingleInstance`）；`--restarted` 时轮询等待旧进程释放锁后接管；重复启动时广播 `GammaLift_ShowWindow` 把已有窗口唤到前台。消息名收敛在 `Program.ShowWindowMessageName`，`MainForm` 引用同一常量 |
-| `src/MainForm.cs` | 3022 | 主窗体：手写 UI、滑杆联动、曲线、折叠硬件区、托盘、预设新建 / 保存 / 统一编辑提交 / 分享导入、手势热键与模态暂停 |
-| `src/SettingsForm.cs` | 731 | 单页模态设置：按「启动与权限 / 界面与语言 / 显示器 / 托盘与通知」拆成 4 页，菜单二级项各开一个独立窗口；每页一组，右上角「ⓘ」悬停说明。与主窗体共用 `S()`，文字实测、超高滚动，取消不提交 |
-| `src/AboutForm.cs` | 237 | 模态「关于」对话框：图标、版本、两行版权、MIT 全文（只读可滚动）、项目仓库链接。顶部「帮助」菜单与托盘菜单共用 |
-| `src/AppInfo.cs` | 48 | 产品元信息：程序集版本、对外版本号、两行版权、仓库地址与内置 MIT 全文 |
-| `src/CurveView.cs` | 19 | Gamma 曲线预览控件：`PictureBox` 子类，开启双缓冲 + `ResizeRedraw`，避免缩放时残留旧曲线 |
-| `src/ToastForm.cs` | 223 | 自绘置顶提示窗（替代系统气泡通知）：GammaLift 图标、圆角深色底板、不抢焦点、自动淡出、单实例复用 |
-| `src/AppIcon.cs` | 75 | 统一图标来源：从嵌入资源 `GammaLift.ico` 读取，按尺寸取帧并缓存，供窗体 / 托盘 / 提示窗使用 |
-| `src/SystemIntegration.cs` | 93 | 注册表集成：开机自启动（`Run` 键）、`GdiIcmGammaRange` 解除 / 查询 |
-| `src/MonitorService.cs` | 277 | 显示器枚举（EDID / 硬件 ID 作为配置键）、gamma LUT 读写、基线 LUT 捕获、DDC/CI 探测 |
-| `src/NativeMethods.cs` | 268 | 所有 P/Invoke 声明与结构体，含显示器、独占热键、低级键盘钩子及消息循环 |
-| `src/Models.cs` | 249 | 数据模型、`HotkeyTrigger`、通知 / 循环热键偏好、DDC/CI 能力缓存（`DdcCapability`），以及 `SettingsStore`（便携优先，目录不可写时回退「文档」文件夹） |
-| `src/HotkeyGestureEngine.cs` | 522 | 单调时钟、纯手势状态机、绑定校验 / 格式化、专用线程的非阻塞键盘观察钩子 |
-| `src/ProfileShareCode.cs` | 237 | GL2 单屏参数投影：flags + RGB 数值 + CRC-8、Base64url；联动 11 字符 / 分通道 22 字符 |
-| `src/ShareCodeForm.cs` | 144 | 模态「导入分享码」对话框：粘贴 GL2 码、就地校验并显示错误，返回单屏参数 |
-| `src/ProfileEditForm.cs` | 463 | 模态「预设编辑」对话框：在副本上排序、重命名、删除，标记当前项，删除带未保存修改的当前项前二次确认；确定后统一提交，支持高 DPI 与 16 语言 |
-| `src/ConfirmForm.cs` | 112 | 模态二选一确认框：文案按目标语言传入，按钮固定英文 Yes / No（系统 MessageBox 按钮会跟随 Windows 显示语言） |
-| `src/GammaMath.cs` | 73 | Gamma 曲线数学：由 (brightness, contrast, gamma) 生成 256 项 LUT |
-| `src/IdentifyForm.cs` | 60 | 「识别显示器」时全屏闪烁数字的覆盖窗 |
-| `src/Loc.cs` | 229 | 多语言框架：语言注册表、`T("中文原文")` 查表、跟随系统的语言探测与持久化 |
-| `src/Lang*.cs` | 每个 250 | 各语言字典（`LangDe` / `LangEn` / `LangZhHant` …），只提供「中文原文 → 译文」的映射，漏翻回退中文 |
+| 文件                           |     行数 | 职责                                                                                                                                                                                                                                    |
+| ------------------------------ | -------: | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/Program.cs`             |      126 | 入口。单实例 Mutex（`GammaLift_SingleInstance`）；`--restarted` 时轮询等待旧进程释放锁后接管；重复启动时广播 `GammaLift_ShowWindow` 把已有窗口唤到前台。消息名收敛在 `Program.ShowWindowMessageName`，`MainForm` 引用同一常量 |
+| `src/MainForm.cs`            |     3055 | 主窗体：手写 UI、滑杆联动、曲线、折叠硬件区、托盘、预设新建 / 保存 / 统一编辑提交 / 分享导入、手势热键与模态暂停                                                                                                                        |
+| `src/SettingsForm.cs`        |      731 | 单页模态设置：按「启动与权限 / 界面与语言 / 显示器 / 托盘与通知」拆成 4 页，菜单二级项各开一个独立窗口；每页一组，右上角「ⓘ」悬停说明。与主窗体共用 `S()`，文字实测、超高滚动，取消不提交                                            |
+| `src/AboutForm.cs`           |      237 | 模态「关于」对话框：图标、版本、两行版权、MIT 全文（只读可滚动）、项目仓库链接。顶部「帮助」菜单与托盘菜单共用                                                                                                                          |
+| `src/TutorialForm.cs`        |      185 | 模态「使用教程」对话框：标题 + 「快速上手」5 条 + GitHub 完整教程链接；帮助菜单第一项                                                                                                                                                   |
+| `src/AppInfo.cs`             |       51 | 产品元信息：程序集版本、对外版本号、两行版权、仓库地址、教程地址与内置 MIT 全文                                                                                                                                                         |
+| `src/CurveView.cs`           |       19 | Gamma 曲线预览控件：`PictureBox` 子类，开启双缓冲 + `ResizeRedraw`，避免缩放时残留旧曲线                                                                                                                                            |
+| `src/ToastForm.cs`           |      223 | 自绘置顶提示窗（替代系统气泡通知）：GammaLift 图标、圆角深色底板、不抢焦点、自动淡出、单实例复用                                                                                                                                        |
+| `src/AppIcon.cs`             |       75 | 统一图标来源：从嵌入资源 `GammaLift.ico` 读取，按尺寸取帧并缓存，供窗体 / 托盘 / 提示窗使用                                                                                                                                           |
+| `src/SystemIntegration.cs`   |       93 | 注册表集成：开机自启动（`Run` 键）、`GdiIcmGammaRange` 解除 / 查询                                                                                                                                                                  |
+| `src/MonitorService.cs`      |      277 | 显示器枚举（EDID / 硬件 ID 作为配置键）、gamma LUT 读写、基线 LUT 捕获、DDC/CI 探测                                                                                                                                                     |
+| `src/NativeMethods.cs`       |      268 | 所有 P/Invoke 声明与结构体，含显示器、独占热键、低级键盘钩子及消息循环                                                                                                                                                                  |
+| `src/Models.cs`              |      252 | 数据模型、`HotkeyTrigger`、通知 / 循环热键偏好、DDC/CI 能力缓存（`DdcCapability`）、`PresetsSeeded` 系统预设标记，以及 `SettingsStore`（便携优先，目录不可写时回退「文档」文件夹）                                              |
+| `src/BuiltInPresets.cs`      |       81 | 首次启动的四套系统预设（默认 / 游戏暗光 / 游戏极暗 / 暗场观影）：参数模板、每台显示器展开、初始热键与只种一次的判断                                                                                                                     |
+| `src/HotkeyGestureEngine.cs` |      522 | 单调时钟、纯手势状态机、绑定校验 / 格式化、专用线程的非阻塞键盘观察钩子                                                                                                                                                                 |
+| `src/ProfileShareCode.cs`    |      237 | GL2 单屏参数投影：flags + RGB 数值 + CRC-8、Base64url；联动 11 字符 / 分通道 22 字符                                                                                                                                                    |
+| `src/ShareCodeForm.cs`       |      144 | 模态「导入分享码」对话框：粘贴 GL2 码、就地校验并显示错误，返回单屏参数                                                                                                                                                                 |
+| `src/ProfileEditForm.cs`     |      463 | 模态「预设编辑」对话框：在副本上排序、重命名、删除，标记当前项，删除带未保存修改的当前项前二次确认；确定后统一提交，支持高 DPI 与 16 语言                                                                                               |
+| `src/ConfirmForm.cs`         |      112 | 模态二选一确认框：文案按目标语言传入，按钮固定英文 Yes / No（系统 MessageBox 按钮会跟随 Windows 显示语言）                                                                                                                              |
+| `src/GammaMath.cs`           |       73 | Gamma 曲线数学：由 (brightness, contrast, gamma) 生成 256 项 LUT                                                                                                                                                                        |
+| `src/IdentifyForm.cs`        |       60 | 「识别显示器」时全屏闪烁数字的覆盖窗                                                                                                                                                                                                    |
+| `src/Loc.cs`                 |      229 | 多语言框架：语言注册表、`T("中文原文")` 查表、跟随系统的语言探测与持久化                                                                                                                                                              |
+| `src/Lang*.cs`               | 每个 259 | 各语言字典（`LangDe` / `LangEn` / `LangZhHant` …），只提供「中文原文 → 译文」的映射，漏翻回退中文                                                                                                                               |
 
 ## 核心实现要点
 
@@ -108,6 +116,9 @@ powershell -ExecutionPolicy Bypass -File build.ps1
 `OnFormClosing` 的「关闭到托盘」分支判断 `!_restarting`：否则 `Close()`（`CloseReason` 是 `UserClosing`）会被取消，旧进程只藏到托盘、新进程又起来，造成双实例。
 重启确认用 `ConfirmForm`（不是 `MessageBox`）：文案通过 `Loc.TIn(目标语言, "原文")` 取目标语言的译文，字体也用 `Loc.UiFont(目标语言, ...)`，让人在重启前就看到新语言；按钮固定英文 Yes / No，因为系统 MessageBox 的按钮跟随 Windows 显示语言，换过语言的用户按习惯找不到「是 / 否」。`Loc.TIn` 只查表、不改 `Loc.Code`，所以选「否」后当前界面语言不受影响。
 
+**帮助菜单与使用教程**
+「帮助」下拉顺序是「使用教程」/ 分隔线 /「关于 GammaLift」。`TutorialForm` 是模态单页：标题 + 「快速上手」5 条 + 「查看完整教程（GitHub）」链接（`AppInfo.GuideUrl` → `docs/guide.md`）。正文 key 是一整段带 `\r\n` 的中文原文，16 种语言在 `Lang*.cs` 里按同一 key 提供译文；新增语言时别忘了这条。`OpenTutorial()` 与 `OpenAbout()` 都走 `ShowOwnedDialog`，保持热键暂停与模态行为一致。
+
 **置顶提示（ToastForm）**
 便携单文件应用没有开始菜单快捷方式与 AppUserModelID，`NotifyIcon.ShowBalloonTip` 转成 Windows toast 后图标会变成通用图标 / 空白，所以通知一律走 `ToastForm.ShowMessage`（自绘、TopMost、`WS_EX_NOACTIVATE`、自动淡出、单实例复用）。
 托盘图标与提示窗图标统一从 `AppIcon` 取；直接 `new Icon(...)` 拿不到与 exe 一致的多尺寸帧。
@@ -120,6 +131,11 @@ powershell -ExecutionPolicy Bypass -File build.ps1
 
 分享码固定放在软件调节区右上角，三个按钮依次是「复制分享码 / 导入分享码 / 重置」（`LayoutGammaInner` 按 `ButtonWidth` 排布，长译文放不下时整排换到第二行）。
 复制把当前选中显示器的参数写入剪贴板并弹 `ToastForm` 提示；导入打开 `ShareCodeForm` 模态框，粘贴、校验、报错都在弹窗内完成，通过后才应用到当前显示器。分享码只投影当前选中显示器的当前参数（不是已保存预设），默认参数时为空（复制按钮禁用）；编码用 GL2 二进制：flags（linked / compact）+ RGB 数值 + CRC-8，再 Base64url，联动 11 字符、分通道 22 字符。导入只改 `_settings.Current` 并立即应用，不新增预设、不改 `_activeProfile` / LastProfile。重置只作用于当前显示器；「重置所有显示器」只保留在托盘右键菜单。
+
+**内置预设**
+`BuiltInPresets.Seed` 在 `MainForm.Load` 的 `RefreshMonitors` 之后运行一次：`AppSettings.Profiles` 为空且有显示器时，种入「默认 / 游戏暗光 / 游戏极暗 / 暗场观影」四套，每套覆盖当时已连接的每台显示器；名称用 `Loc.T` 按首次启动的界面语言生成，之后切换语言不会改名。`AppSettings.PresetsSeeded` 记录已种入，用户删除后不会恢复；已有预设的配置只置位不补种。
+初始热键：`CycleHotKey` = F4 单击（循环切换），「默认」预设 = F4 长按（恢复默认）。`LastProfile` 指向「默认」。
+种子只覆盖首次启动时已连接的显示器；之后新接的显示器套用内置预设时按默认值处理，与现有用户预设一致。
 
 **最小化 / 关闭到托盘**
 `AppSettings.TrayOnClose` 控制关闭按钮是否隐藏到托盘；`AppSettings.MinimizeToTray`（默认 `true`，字段缺失时取构造函数默认值）控制最小化按钮。最小化时 `OnResize` 用 `BeginInvoke` 延迟 `Hide()`：同步调用会让任务栏按钮闪一下才消失。`Hide()` 同时移除任务栏按钮，只留通知区域图标。`ShowMainWindow()` 先置 `_suppressMinimizeHide` 再 `Show()` / 恢复 `Normal`，否则会再次触发隐藏。
@@ -150,7 +166,8 @@ NotifyEnabled 与 NotifyProfileApplied / NotifyProfileAppliedForeground / Notify
 - **版本与许可**：`AppInfo.cs` 是版本号、两行版权、仓库地址和 MIT 全文的唯一来源；程序集版本属性也在同一文件。两行版权的顺序是**本软件作者 suiying8345 在前、原作者 NiseMonox 在后**，`LICENSE` 与 `AboutForm` 的许可证全文保持同一顺序；「关于」窗口只展示许可证内的版权声明。`RepositoryUrl` 与仓库地址一致；发版时同步 `Version`、程序集版本与 `CHANGELOG.md`
 - **按显示器硬件 ID 分键**，所以换接口 / 重新插拔不会错配配置
 - 读写全包在 try/catch 里：配置损坏或保存失败都不能让程序崩溃（回退默认值）
-- 顶部 `MenuStrip` 提供「设置」（下拉 4 个分页）「帮助 › 关于」。`MinimizeToTray` 默认 `true`，`TrayOnClose` 默认 `true`
+- 顶部 `MenuStrip` 提供「设置」（下拉 4 个分页）「帮助 › 使用教程 / 关于」。`MinimizeToTray` 默认 `true`，`TrayOnClose` 默认 `true`
+- 状态栏右下角显示版本号（`v` + `AppInfo.Version`），左侧是运行状态与「● 未保存」标记
 - Windows 默认钳制 gamma LUT 范围（防全黑 / 全白）；「设置 › 启动与权限」里提供「解除极端数值限制」（`SystemIntegration.UnlockGammaRange`），写注册表 `GdiIcmGammaRange=256`，需管理员、注销后生效
 - 数值被系统拒绝时不在主界面常驻提示：状态栏显示可点击链接（`ShowRampRejected` → `RenderStatus`），点击直接打开「设置 › 启动与权限」并聚焦解除按钮
 
@@ -158,19 +175,17 @@ NotifyEnabled 与 NotifyProfileApplied / NotifyProfileAppliedForeground / Notify
 
 - 注释用**简体中文**，`/// <summary>` 写要点
 - 中文文案与文档遵循《中文文案排版指北》：
-
-  | 项 | 口径 |
-  |---|---|
-  | 中英文之间、中文与数字之间 | 加空格 |
-  | 数字与单位之间 | 加空格（`100 ms`、`96 dpi`）；`50%`、`30°` 不加 |
-  | 标点 | 中文全角；破折号 `——`；省略号 `……` |
-  | 引号 | 统一 `「」`，嵌套 `『』`，不用 `""` 与 `“”` |
-  | 斜杠 | 并列项写 ` / `（两侧空格） |
-  | 专有名词 | `GammaLift`、`Windows`、`GitHub`、`DDC/CI`、`Gamma LUT`、`GDI32`、`NtUser` 大小写固定 |
-  | 不套排版规则 | 代码标识符、文件路径、命令行、URL、行内代码 |
-  | 引用 UI 控件标题 | 用行内代码包裹（UI 原文用半角括号，如 `硬件调节 (DDC/CI)`），正文叙述用全角括号 |
-  | 术语 | 统一「Gamma LUT」（不写「伽马查找表」）、「预设」（不写「配置」「档案」）、「显示器」（不写「屏幕」「监视器」） |
-
+  | 项                         | 口径                                                                                                            |
+  | -------------------------- | --------------------------------------------------------------------------------------------------------------- |
+  | 中英文之间、中文与数字之间 | 加空格                                                                                                          |
+  | 数字与单位之间             | 加空格（`100 ms`、`96 dpi`）；`50%`、`30°` 不加                                                        |
+  | 标点                       | 中文全角；破折号 `——`；省略号 `……`                                                                      |
+  | 引号                       | 统一 `「」`，嵌套 `『』`，不用 `""` 与 `“”`                                                           |
+  | 斜杠                       | 并列项写 `/`（两侧空格）                                                                                      |
+  | 专有名词                   | `GammaLift`、`Windows`、`GitHub`、`DDC/CI`、`Gamma LUT`、`GDI32`、`NtUser` 大小写固定             |
+  | 不套排版规则               | 代码标识符、文件路径、命令行、URL、行内代码                                                                     |
+  | 引用 UI 控件标题           | 用行内代码包裹（UI 原文用半角括号，如 `硬件调节 (DDC/CI)`），正文叙述用全角括号                               |
+  | 术语                       | 统一「Gamma LUT」（不写「伽马查找表」）、「预设」（不写「配置」「档案」）、「显示器」（不写「屏幕」「监视器」） |
 - 源文件编码：**UTF-8 无 BOM**（若某次编译后中文乱码，给 csc 加 `/codepage:65001`）
 - UI 全部手写坐标布局，不用 Designer / `.resx`；控件由 `NewLabel` / `NewButton` / `NewTrack` / `AddRow` / `AddDdcRow` 等工厂方法创建，保持风格统一
 - 所有坐标在 `LayoutUi()` 里算，构建代码只创建控件、不写死位置。`AddRow` / `AddDdcRow` 只创建控件并返回标签，位置由 `LayoutGammaInner` / `LayoutDdcInner` / `LayoutProfileInner` 给出；窗口是 `Sizable`，`OnResize` 每次都会重排

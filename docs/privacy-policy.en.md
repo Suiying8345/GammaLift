@@ -2,13 +2,13 @@
 
 # GammaLift Privacy Policy
 
-**Effective date: November 13, 2026**
+**Effective date: November 14, 2026**
 
 This privacy policy applies to the GammaLift desktop application for Windows ("the app"). It explains what information the app touches, where that information is stored, and what the app does not do.
 
 ## Summary
 
-**GammaLift does not connect to the network and does not collect any personal information.** There is no account system, no advertising, no analytics, and no crash reporting. The program contains no network request code, and every feature works offline. Everything you adjust in the app is written to a single JSON file on your own computer.
+**GammaLift does not connect to the network and does not collect any personal information.** There is no account system, no advertising, no analytics, and no crash reporting. The app contains no network request code, and every feature works offline. Everything you adjust in the app is written to a single JSON file on your own computer.
 
 ## Information the app touches
 
@@ -24,7 +24,7 @@ GammaLift is a local tool. It has no servers and nowhere to send data. The follo
 
 Preferences such as interface language, UI scale, hotkey bindings and gestures, notification switches, autostart state, and whether the hardware panel is expanded.
 
-Location: by default `GammaLiftSettings.json` in the same folder as `GammaLift.exe`. If that folder is not writable (for example `Program Files` or a read-only share), the file goes to the same name inside your Documents folder. On first launch, if a legacy configuration is found under `%APPDATA%` (GammaLift / Lumin / GammaPanelX), a copy is made; the old folder is left untouched.
+Location: by default `GammaLiftSettings.json` in the same folder as `GammaLift.exe`. If that folder is not writable (for example `Program Files` or a read-only share), the file goes to the same name inside your Documents folder.
 
 ### Keyboard input (only to recognize hotkey gestures)
 
@@ -38,7 +38,7 @@ Hotkeys are registered only after you set and enable them; the app never listens
 
 ### Clipboard (write-only)
 
-The app writes to the Windows clipboard only when you click **Copy** next to the share code, and only that share code text. It does not touch the clipboard otherwise: to import a share code, **you** paste the text into the input field, and the app does not read clipboard contents.
+The app writes to the Windows clipboard only when you click **Copy share code**, and only that share code text. It does not touch the clipboard otherwise: to import a share code, **you** paste the text into the input field, and the app does not read clipboard contents.
 
 ### Registry
 
@@ -68,7 +68,7 @@ Both can be reverted at any time: turn the switch off, or delete the value manua
 
 ## Third-party components
 
-The app bundles no third-party library or embedded SDK. It calls only components that ship with Windows, plus assemblies that ship with .NET Framework (for example `System.Web.Extensions` for JSON serialization):
+The app bundles no third-party runtime library or embedded SDK. It calls only components that ship with Windows, plus assemblies that ship with .NET Framework (for example `System.Web.Extensions` for JSON serialization):
 
 - **GDI32**: `GetDeviceGammaRamp` / `SetDeviceGammaRamp`, reading and writing the gamma LUT of each monitor output;
 - **User32**: monitor enumeration, global hotkey registration, keyboard hook;
