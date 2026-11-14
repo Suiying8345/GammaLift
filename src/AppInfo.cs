@@ -1,8 +1,8 @@
 using System.Reflection;
 
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
-[assembly: AssemblyInformationalVersion("1.0.0")]
+[assembly: AssemblyVersion("1.0.1.0")]
+[assembly: AssemblyFileVersion("1.0.1.0")]
+[assembly: AssemblyInformationalVersion("1.0.1")]
 
 namespace GammaLift
 {
@@ -10,7 +10,7 @@ namespace GammaLift
     internal static class AppInfo
     {
         /// <summary>对外显示的版本号, 不含末尾的 .0。</summary>
-        public const string Version = "1.0.0";
+        public const string Version = "1.0.1";
 
         /// <summary>两行版权，与仓库根目录的 LICENSE 保持一致（本软件作者在前，原作者在后）。</summary>
         public const string Copyright =
