@@ -245,6 +245,15 @@ namespace GammaLift
             { "预设已更新", "Đã cập nhật hồ sơ" },
             { "上移", "Di chuyển lên" },
             { "下移", "Di chuyển xuống" },
+            { "使用教程", "Hướng dẫn" },
+            { "快速上手", "Bắt đầu nhanh" },
+            { "• 选显示器，拖「亮度 / 对比度 / 伽马」，右侧曲线实时变化。\r\n• 提亮暗部先调伽马；暗场景里加对比度会把画面压得更黑。\r\n• 调好后「保存」为预设，可绑全局热键；托盘菜单也能切换。\r\n• 右上角「复制 / 导入分享码」交换当前显示器的参数。\r\n• 「重置」回到系统 ICC 校准。", "• Chọn màn hình và kéo Độ sáng / Độ tương phản / Gamma; đường cong cập nhật trực tiếp.\r\n• Để làm sáng vùng tối, hãy chỉnh gamma trước. Trong cảnh tối, tăng độ tương phản sẽ làm hình ảnh tối hơn.\r\n• Sau khi chỉnh, nhấn Lưu để tạo cấu hình và gán phím tắt toàn cục; menu khay hệ thống cũng có thể chuyển.\r\n• Ở góc trên phải, Sao chép / Nhập mã chia sẻ để trao đổi thông số của màn hình hiện tại.\r\n• Đặt lại sẽ trở về hiệu chuẩn ICC của hệ thống." },
+            { "查看完整教程（GitHub）", "Xem hướng dẫn đầy đủ (GitHub)" },
+            { "首次使用、预设与分享码的快速上手", "Bắt đầu nhanh: lần đầu dùng, cấu hình và mã chia sẻ" },
+            { "默认", "Mặc định" },
+            { "游戏暗光", "Game ban ngày" },
+            { "游戏极暗", "Game cực tối" },
+            { "暗场观影", "Phim" },
         };
     }
 }

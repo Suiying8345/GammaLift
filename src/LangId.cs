@@ -245,6 +245,15 @@ namespace GammaLift
             { "预设已更新", "Profil diperbarui" },
             { "上移", "Pindah ke atas" },
             { "下移", "Pindah ke bawah" },
+            { "使用教程", "Tutorial" },
+            { "快速上手", "Mulai cepat" },
+            { "• 选显示器，拖「亮度 / 对比度 / 伽马」，右侧曲线实时变化。\r\n• 提亮暗部先调伽马；暗场景里加对比度会把画面压得更黑。\r\n• 调好后「保存」为预设，可绑全局热键；托盘菜单也能切换。\r\n• 右上角「复制 / 导入分享码」交换当前显示器的参数。\r\n• 「重置」回到系统 ICC 校准。", "• Pilih monitor dan seret Kecerahan / Kontras / Gamma; kurva diperbarui langsung.\r\n• Untuk menaikkan bayangan, atur gamma terlebih dahulu. Di adegan gelap, kontras yang lebih tinggi membuat gambar lebih gelap.\r\n• Setelah selesai, klik Simpan untuk membuat profil dan tetapkan hotkey global; menu tray juga bisa berganti.\r\n• Di kanan atas, Salin / Impor kode berbagi untuk bertukar pengaturan monitor saat ini.\r\n• Atur ulang mengembalikan kalibrasi ICC sistem." },
+            { "查看完整教程（GitHub）", "Lihat panduan lengkap (GitHub)" },
+            { "首次使用、预设与分享码的快速上手", "Mulai cepat: penggunaan pertama, profil, dan kode berbagi" },
+            { "默认", "Default" },
+            { "游戏暗光", "Game siang" },
+            { "游戏极暗", "Game sangat gelap" },
+            { "暗场观影", "Film" },
         };
     }
 }

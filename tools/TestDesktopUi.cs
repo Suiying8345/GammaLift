@@ -221,7 +221,7 @@ namespace GammaLift
                 main.Shown += delegate { main.BeginInvoke((MethodInvoker)delegate
                 {
                     settings = Field<AppSettings>(main, "_settings");
-                    Group("shown main and safe backend", delegate { Check(MonitorService.GammaApplyCount == 0, "startup must not apply"); Check(MonitorService.DdcCount == 0, "startup collapsed hardware never queried"); Check(Field<ComboBox>(main, "cboMonitors").Items.Count == 2, "two mock monitors"); Snapshot(main, "main-zh"); });
+                    Group("shown main and safe backend", delegate { Check(MonitorService.GammaApplyCount == 0, "startup must not apply"); Check(MonitorService.DdcCount == 0, "startup collapsed hardware never queried"); Check(Field<ComboBox>(main, "cboMonitors").Items.Count == 2, "two mock monitors"); Check(settings.PresetsSeeded, "existing profiles mark built-ins as seeded"); Check(settings.Profiles.Count == 2, "existing profiles are not duplicated"); Snapshot(main, "main-zh"); });
                     Group("top menu entries", MenuEntries);
                     Group("rename", Rename); Group("edit profiles", Sort); Group("copy saved share code", Copy); Group("import", Import);
                     Group("cycle and profile capture", Cycle); Group("settings pending and commit", Settings);
@@ -259,6 +259,13 @@ namespace GammaLift
             });
             ToolStripMenuItem helpItem = menu.Items.Cast<ToolStripItem>().OfType<ToolStripMenuItem>()
                 .First(x => x.Name == "mnuHelp");
+            ToolStripItem tutorialItem = helpItem.DropDownItems.Cast<ToolStripItem>().First(x => x.Name == "mnuTutorial");
+            Automate(delegate { tutorialItem.PerformClick(); }, delegate(Form f)
+            {
+                Check(f is TutorialForm, "help menu opens tutorial");
+                Snapshot(f, "tutorial-zh");
+                ((Button)f.AcceptButton).PerformClick();
+            });
             ToolStripItem aboutItem = helpItem.DropDownItems.Cast<ToolStripItem>().First(x => x.Name == "mnuAbout");
             Automate(delegate { aboutItem.PerformClick(); }, delegate(Form f)
             {
@@ -266,8 +273,10 @@ namespace GammaLift
                 Snapshot(f, "about-zh");
                 ((Button)f.AcceptButton).PerformClick();
             });
-            Check(Field<StatusStrip>(main, "statusStrip").Items.Count == 2,
-                "status bar has no settings/about buttons");
+            StatusStrip statusBar = Field<StatusStrip>(main, "statusStrip");
+            Check(statusBar.Items.Count == 3, "status bar has status, dirty and version");
+            ToolStripStatusLabel version = statusBar.Items[2] as ToolStripStatusLabel;
+            Check(version != null && version.Text == "v" + AppInfo.Version, "status bar shows version");
         }
         private static void Rename()
         {

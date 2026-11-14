@@ -20,6 +20,9 @@ namespace GammaLift
         /// <summary>项目仓库地址。</summary>
         public const string RepositoryUrl = "https://github.com/Suiying8345/GammaLift";
 
+        /// <summary>完整使用教程（仓库中的 docs/guide.md）。</summary>
+        public const string GuideUrl = "https://github.com/Suiying8345/GammaLift/blob/main/docs/guide.md";
+
         /// <summary>MIT 许可证全文。内置在 exe 里，便携版不依赖外部 LICENSE 文件。</summary>
         public const string LicenseText =
             "MIT License\r\n" +

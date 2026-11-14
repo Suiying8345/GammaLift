@@ -122,6 +122,8 @@ namespace GammaLift
         public int UiScalePercent { get; set; }    // 界面字号预设: 85 小 / 100 中 / 115 大
         public string Language { get; set; }       // 界面语言代码；空 = 跟随系统
         public string LastProfile { get; set; }
+        /// <summary>首次启动的系统预设已种入；用户删除后不再自动恢复。</summary>
+        public bool PresetsSeeded { get; set; }
         public int CycleHotKey { get; set; }
         public HotkeyTrigger CycleHotKeyTrigger { get; set; }
         public bool NotifyEnabled { get; set; }
@@ -144,6 +146,7 @@ namespace GammaLift
             UiScalePercent = 100;                  // 现有字号即"中"
             Language = Loc.AutoCode;               // 默认跟随系统语言
             LastProfile = "";
+            PresetsSeeded = false;
             NotifyEnabled = true;
             NotifyProfileApplied = true;
             NotifyProfileAppliedForeground = false;   // 前台只更新状态栏, 不弹提示

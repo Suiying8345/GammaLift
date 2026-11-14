@@ -71,6 +71,7 @@ namespace GammaLift
         private Button btnClearHotkey;
         private Panel pnlHotkey;
         private ToolStripStatusLabel lblDirty;   // "未保存"标记, 放在状态栏, 避免与多语言的长译文抢位置
+        private ToolStripStatusLabel lblVersion; // 状态栏右下角的版本号
         private TextBox txtHotkey;
         private ComboBox cboHotkeyTrigger;
 
@@ -157,6 +158,7 @@ namespace GammaLift
 
                 _loaded = true;
                 RefreshMonitors(false);
+                SeedBuiltInProfiles();
                 RefreshProfileCombo();
                 RestoreActiveProfile();
                 ReRegisterHotkeys();
@@ -208,10 +210,16 @@ namespace GammaLift
             AddSettingsEntry(mnuSettings, "mnuSettingsTray", "托盘与通知", SettingsPage.Tray);
             ToolStripMenuItem mnuHelp = new ToolStripMenuItem(Loc.T("帮助"));
             mnuHelp.Name = "mnuHelp";
+            ToolStripMenuItem mnuTutorial = new ToolStripMenuItem(Loc.T("使用教程"));
+            mnuTutorial.Name = "mnuTutorial";
+            mnuTutorial.ToolTipText = Loc.T("首次使用、预设与分享码的快速上手");
+            mnuTutorial.Click += delegate { OpenTutorial(); };
             ToolStripMenuItem mnuAbout = new ToolStripMenuItem(Loc.T("关于 GammaLift"));
             mnuAbout.Name = "mnuAbout";
             mnuAbout.ToolTipText = Loc.T("版本、版权、MIT 许可证与项目仓库");
             mnuAbout.Click += delegate { OpenAbout(); };
+            mnuHelp.DropDownItems.Add(mnuTutorial);
+            mnuHelp.DropDownItems.Add(new ToolStripSeparator());
             mnuHelp.DropDownItems.Add(mnuAbout);
             menuMain.Items.AddRange(new ToolStripItem[] { mnuSettings, mnuHelp });
             Controls.Add(menuMain);
@@ -484,6 +492,13 @@ namespace GammaLift
             lblDirty.ForeColor = Color.Firebrick;
             lblDirty.ToolTipText = Loc.T("当前配置文件有未保存的修改");
             statusStrip.Items.Add(lblDirty);
+
+            lblVersion = new ToolStripStatusLabel("v" + AppInfo.Version);
+            lblVersion.ForeColor = SystemColors.GrayText;
+            lblVersion.Margin = new Padding(8, 0, 0, 0);
+            lblVersion.ToolTipText = Loc.F("版本 {0}", AppInfo.Version);
+            lblVersion.AccessibleName = Loc.F("版本 {0}", AppInfo.Version);
+            statusStrip.Items.Add(lblVersion);
 
             Controls.Add(statusStrip);
 
@@ -1952,6 +1967,13 @@ namespace GammaLift
                 PromptRestartForLanguage();
         }
 
+        /// <summary>打开模态「使用教程」对话框（精简步骤与 GitHub 完整教程链接）。</summary>
+        private void OpenTutorial()
+        {
+            using (TutorialForm f = new TutorialForm(_uiScale, _dpiScale))
+                ShowOwnedDialog(f);
+        }
+
         /// <summary>打开模态「关于」对话框（版本、版权、MIT 全文与项目仓库）。</summary>
         private void OpenAbout()
         {
@@ -2186,6 +2208,17 @@ namespace GammaLift
                 ShowProfileHotkey();
             }
             UpdateDirtyMark();
+        }
+
+        /// <summary>首次启动种入系统预设；已有预设只标记 seeded，不补种。</summary>
+        private void SeedBuiltInProfiles()
+        {
+            List<string> keys = new List<string>();
+            foreach (DisplayMonitor m in _monitors) keys.Add(m.StableKey);
+            bool changed;
+            bool seeded = BuiltInPresets.Seed(_settings, keys, out changed);
+            if (seeded) ShowCycleHotkey();
+            if (changed) SettingsStore.Save(_settings);
         }
 
         private Profile FindProfile(string name)

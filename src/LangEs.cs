@@ -245,6 +245,15 @@ namespace GammaLift
             { "预设已更新", "Perfiles actualizados" },
             { "上移", "Subir" },
             { "下移", "Bajar" },
+            { "使用教程", "Tutorial" },
+            { "快速上手", "Inicio rápido" },
+            { "• 选显示器，拖「亮度 / 对比度 / 伽马」，右侧曲线实时变化。\r\n• 提亮暗部先调伽马；暗场景里加对比度会把画面压得更黑。\r\n• 调好后「保存」为预设，可绑全局热键；托盘菜单也能切换。\r\n• 右上角「复制 / 导入分享码」交换当前显示器的参数。\r\n• 「重置」回到系统 ICC 校准。", "• Elige un monitor y arrastra Brillo / Contraste / Gamma; la curva se actualiza en vivo.\r\n• Para levantar las sombras, ajusta primero el gamma. En escenas oscuras, más contraste oscurece la imagen.\r\n• Al terminar, pulsa Guardar para crear un perfil y asigna un atajo global; el menú de la bandeja también permite cambiar.\r\n• Arriba a la derecha, Copiar / Importar código de uso intercambia los ajustes del monitor actual.\r\n• Restablecer vuelve a la calibración ICC del sistema." },
+            { "查看完整教程（GitHub）", "Ver la guía completa (GitHub)" },
+            { "首次使用、预设与分享码的快速上手", "Inicio rápido: primer uso, perfiles y códigos de uso" },
+            { "默认", "Predeterminado" },
+            { "游戏暗光", "Juego diurno" },
+            { "游戏极暗", "Juego muy oscuro" },
+            { "暗场观影", "Cine" },
         };
     }
 }

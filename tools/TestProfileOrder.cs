@@ -24,6 +24,7 @@ namespace GammaLift
                 TestDialog();
                 TestEdits();
                 TestLocalizedLayouts();
+                TestBuiltInPresets();
                 TestPersistence();
                 Console.WriteLine("PASS: {0} profile-edit checks; isolated settings only.", _checks);
                 return 0;
@@ -245,6 +246,67 @@ namespace GammaLift
                     }
                 }
             }
+            Loc.SetLanguage(Loc.SourceCode);
+        }
+
+        private static void TestBuiltInPresets()
+        {
+            Loc.SetLanguage(Loc.SourceCode);
+
+            AppSettings fresh = new AppSettings();
+            bool changed;
+            bool seeded = BuiltInPresets.Seed(fresh, new[] { "MOCK-A", "MOCK-B" }, out changed);
+            Check(seeded && changed, "fresh settings seed built-in presets");
+            Check(fresh.PresetsSeeded, "seed marks PresetsSeeded");
+            Check(fresh.Profiles.Count == 4, "four built-in presets");
+            Check(fresh.Profiles[0].Name == "默认", "neutral preset name");
+            Check(fresh.Profiles[1].Name == "游戏暗光", "daylight preset name");
+            Check(fresh.Profiles[2].Name == "游戏极暗", "extreme dark preset name");
+            Check(fresh.Profiles[3].Name == "暗场观影", "cinema preset name");
+            Check(fresh.LastProfile == "默认", "default profile selected");
+            Check(fresh.CycleHotKey == BuiltInPresets.CycleHotKey, "cycle hotkey seeded");
+            Check(fresh.CycleHotKeyTrigger == HotkeyTrigger.Single, "cycle hotkey is single press");
+            Check(fresh.Profiles[0].HotKey == BuiltInPresets.DefaultHotKey &&
+                  fresh.Profiles[0].HotKeyTrigger == HotkeyTrigger.LongPress, "default hotkey is long press");
+            for (int i = 0; i < 4; i++)
+            {
+                Check(fresh.Profiles[i].Monitors.Count == 2, "preset covers both monitors at " + i);
+                Check(fresh.Profiles[i].Monitors["MOCK-A"].Linked, "linked preset at " + i);
+            }
+            Check(fresh.Profiles[0].Monitors["MOCK-A"].Red.IsNeutral(), "neutral preset is neutral");
+            Check(fresh.Profiles[1].Monitors["MOCK-A"].Red.Contrast == 8 &&
+                  Math.Abs(fresh.Profiles[1].Monitors["MOCK-A"].Red.Gamma - 1.40) < 0.001,
+                  "daylight parameters");
+            Check(fresh.Profiles[2].Monitors["MOCK-A"].Red.Contrast == 4 &&
+                  Math.Abs(fresh.Profiles[2].Monitors["MOCK-A"].Red.Gamma - 2.20) < 0.001,
+                  "extreme dark parameters");
+            Check(fresh.Profiles[3].Monitors["MOCK-A"].Red.Contrast == 4 &&
+                  Math.Abs(fresh.Profiles[3].Monitors["MOCK-A"].Red.Gamma - 1.16) < 0.001,
+                  "cinema parameters");
+
+            AppSettings existing = new AppSettings();
+            existing.Profiles.Add(MakeProfile("Mine"));
+            seeded = BuiltInPresets.Seed(existing, new[] { "MOCK-A" }, out changed);
+            Check(!seeded && changed, "existing profiles are not seeded");
+            Check(existing.PresetsSeeded, "existing profiles mark PresetsSeeded");
+            Check(existing.Profiles.Count == 1 && existing.Profiles[0].Name == "Mine", "existing profile kept");
+
+            AppSettings deleted = new AppSettings();
+            deleted.PresetsSeeded = true;
+            seeded = BuiltInPresets.Seed(deleted, new[] { "MOCK-A" }, out changed);
+            Check(!seeded && !changed && deleted.Profiles.Count == 0, "deleted presets do not come back");
+
+            AppSettings noMonitor = new AppSettings();
+            seeded = BuiltInPresets.Seed(noMonitor, new string[0], out changed);
+            Check(!seeded && !changed && !noMonitor.PresetsSeeded, "no monitors retries next launch");
+
+            Loc.SetLanguage("en");
+            List<Profile> english = BuiltInPresets.Create(new[] { "MOCK-A" });
+            Check(english[0].Name == "Default", "localized neutral name");
+            Check(english[1].Name == "Game daylight", "localized daylight name");
+            Check(english[2].Name == "Game extreme dark", "localized extreme dark name");
+            Check(english[3].Name == "Cinema", "localized cinema name");
+
             Loc.SetLanguage(Loc.SourceCode);
         }
 
