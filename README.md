@@ -57,11 +57,15 @@ GammaLift 只改变显示输出（显卡 Gamma LUT 与显示器 OSD），不读�
 | 游戏极暗 | 0 / +4 / 2.20         | 夜图、全黑房间；无夜视装备应急 | `GL2A2Ro3AB5` |
 | 暗场观影 | 0 / +4 / 1.16         | 暗场多的电影、黑位差的面板     | `GL2A2RodADJ` |
 
-### 示例场景1
+### 示例场景1 · 电影暗场观影
+
+![昏暗卧室过场中的三套预设对比](docs/screenshots/presets-cutscene-zh.jpg)
+
+### 示例场景2 · 游戏白天室内
 
 ![推荐预设对比](docs/screenshots/presets-compare-zh.jpg)
 
-### 示例场景2
+### 示例场景3 · 游戏极暗场景
 
 ![极暗场景下的预设对比](docs/screenshots/presets-night-zh.jpg)
 
@@ -81,7 +85,7 @@ GammaLift 站在两个巨人的肩膀上：
 - 经典 [Gamma Panel](https://gamma-panel.en.softonic.com/)
 - [NiseMonox](https://github.com/NiseMonox) 的 [GammaPanelX](https://github.com/NiseMonox/GammaPanelX)
 
-GammaLift 是基于 GammaPanelX 的衍生项目。MIT 许可证与两行版权见 [LICENSE](LICENSE)。
+GammaLift 是基于 GammaPanelX 的衍生项目，MIT 许可证与版权见 [LICENSE](LICENSE)。
 
 ## 隐私
 

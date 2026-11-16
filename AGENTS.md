@@ -41,7 +41,13 @@ powershell -ExecutionPolicy Bypass -File build.ps1
 
 `docs/screenshots/main-zh.png` / `main-en.png` 由 `tools/MakeScreenshots.ps1` 生成：脚本排除 `MonitorService.cs` / `SystemIntegration.cs`，改用 `tools/MakeScreenshots.cs` 里的虚拟显示器（「演示显示器 A / B」「Demo Display A / B」），不会把本机显示器名带进文档。改 UI 后重跑该脚本即可更新两张图。
 
-`docs/screenshots/presets-compare-zh.jpg` / `-en.jpg`（室内）与 `presets-night-zh.jpg` / `-en.jpg`（极暗）由 `build/gamma-test/readme_preview.py` 生成：分别读取 `build/gamma-test/src/01-indoor-mixed-light.png` 与 `10-night-black-room.png`，先裁掉顶部物品栏、左侧人形与底部体力 / 版本信息，再套三套推荐预设拼成 2×2 对比图。换素材或改预设参数时同步重跑。
+README「推荐预设」区有三张 2×2 对比图，均由 `build/gamma-test/readme_preview.py` 生成，按 `SCENES` 顺序读取 `build/gamma-test/src/` 下的素材：
+
+- `presets-cutscene-zh/en.jpg` ← `14-cutscene-dark-bedroom.png`，裁剪 `CROP_CUTSCENE`（仅切右侧 1px 黑列）
+- `presets-compare-zh/en.jpg` ← `01-indoor-mixed-light.png`，裁剪 `CROP`（物品栏 / 人形 / 体力条）
+- `presets-night-zh/en.jpg` ← `10-night-black-room.png`，裁剪 `CROP`（同上）
+
+每张都把同一画面套「原图 / 游戏暗光 / 游戏极暗 / 暗场观影」拼成 2×2；**图内只画总标题（`SCENES[].title`）、预设名与参数**，场景说明、每格用途描述一律不进图——场景描述由 README 的小标题承担，改文案时改 README，不要往图里加字。换素材（例如换成更高分辨率的同帧）或改预设参数时同步重跑：`python build/gamma-test/readme_preview.py`。
 
 ### 语言与语法上限
 

@@ -58,11 +58,15 @@ GammaLift only changes the display output (GPU gamma LUT and monitor OSD); it ne
 | Game extreme dark | 0 / +4 / 2.20 | Night maps and pitch-black rooms; emergency use without night vision | `GL2A2Ro3AB5` |
 | Cinema | 0 / +4 / 1.16 | Dark films and panels with weak black levels | `GL2A2RodADJ` |
 
-### Example scene 1
+### Example scene 1 · Watching a dark film
+
+![Presets compared in a dim bedroom cutscene](docs/screenshots/presets-cutscene-en.jpg)
+
+### Example scene 2 · Gaming in a daylit interior
 
 ![Recommended presets compared](docs/screenshots/presets-compare-en.jpg)
 
-### Example scene 2
+### Example scene 3 · Extreme-dark game scene
 
 ![Presets compared in an extreme-dark scene](docs/screenshots/presets-night-en.jpg)
 
@@ -82,7 +86,7 @@ GammaLift stands on the shoulders of two giants:
 - The classic [Gamma Panel](https://gamma-panel.en.softonic.com/)
 - [GammaPanelX](https://github.com/NiseMonox/GammaPanelX) by [NiseMonox](https://github.com/NiseMonox)
 
-GammaLift is a derivative of GammaPanelX. The MIT license and both copyright lines are in [LICENSE](LICENSE).
+GammaLift is a derivative of GammaPanelX. The MIT license and copyright are in [LICENSE](LICENSE).
 
 ## Privacy
 
